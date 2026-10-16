@@ -1,4 +1,5 @@
 import { CHARACTER_LIMIT } from "../constants.js";
+import { toCdnUrl } from "./urls.js";
 import type {
   AppResult,
   ScreenResult,
@@ -15,7 +16,7 @@ export function formatApps(apps: AppResult[]): string {
   const lines = apps.map((app, i) => {
     const screens = app.previewScreens
       .slice(0, 2)
-      .map((s) => s.screenUrl)
+      .map((s) => toCdnUrl(s.screenUrl))
       .join("\n    ");
     const hasMetrics = app.popularityMetric !== undefined || app.trendingMetric !== undefined;
     return [
@@ -55,7 +56,8 @@ export function formatScreens(screens: ScreenResult[]): string {
       `- **Platform**: ${s.platform}`,
       `- **Patterns**: ${s.screenPatterns.join(", ") || "None"}`,
       `- **Elements**: ${s.screenElements.join(", ") || "None"}`,
-      `- **Screen URL**: ${s.screenUrl}`,
+      `- **Screen**: [Open Image in Browser](${toCdnUrl(s.screenUrl)})`,
+      `- **Screen URL**: ${toCdnUrl(s.screenUrl)}`,
       `- **App ID**: ${s.appId}`,
       `- **Screen ID**: ${s.id}`,
       width !== undefined && height !== undefined ? `- **Dimensions**: ${width}x${height}` : "",
@@ -76,7 +78,8 @@ export function formatAppPageScreens(screens: AppPageScreen[]): string {
       `- **App**: ${s.appName} (${s.platform})`,
       `- **Patterns**: ${s.screenPatterns.join(", ") || "None"}`,
       `- **Elements**: ${s.screenElements.join(", ") || "None"}`,
-      `- **Screen URL**: ${s.screenUrl}`,
+      `- **Screen**: [Open Image in Browser](${toCdnUrl(s.screenUrl)})`,
+      `- **Screen URL**: ${toCdnUrl(s.screenUrl)}`,
       `- **Screen ID**: ${s.id}`,
       `- **App ID**: ${s.appId}`,
       `- **Dimensions**: ${s.width}x${s.height}`,
@@ -97,7 +100,7 @@ export function formatFlows(flows: FlowResult[]): string {
       .slice(0, 5)
       .map((s, j) => {
         const hotspot = s.hotspotX !== null ? " [hotspot]" : "";
-        return `  ${j + 1}.${hotspot} ${s.screenUrl}`;
+        return `  ${j + 1}.${hotspot} [View Screen](${toCdnUrl(s.screenUrl)})`;
       })
       .join("\n");
     const appInfo = f.appName ? `- **App**: ${f.appName}` : "";
@@ -135,7 +138,8 @@ export function formatCollectionItems(items: CollectionItem[]): string {
         `- **App**: ${s.appName} (${s.platform})`,
         `- **Patterns**: ${s.screenPatterns.join(", ") || "None"}`,
         `- **Elements**: ${s.screenElements.join(", ") || "None"}`,
-        `- **Screen URL**: ${s.screenUrl}`,
+        `- **Screen**: [Open Image in Browser](${toCdnUrl(s.screenUrl)})`,
+        `- **Screen URL**: ${toCdnUrl(s.screenUrl)}`,
         `- **Screen ID**: ${s.id}`,
         `- **App ID**: ${s.appId}`,
         `- **Dimensions**: ${s.width}x${s.height}`,
@@ -149,7 +153,7 @@ export function formatCollectionItems(items: CollectionItem[]): string {
         .slice(0, 5)
         .map((s, j) => {
           const hotspot = s.hotspotX !== null ? " [hotspot]" : "";
-          return `  ${j + 1}.${hotspot} ${s.screenUrl}`;
+          return `  ${j + 1}.${hotspot} [View Screen](${toCdnUrl(s.screenUrl)})`;
         })
         .join("\n");
       return [
@@ -240,7 +244,8 @@ export function formatScreenDetail(params: {
   }
   lines.push(`- **Image format**: ${params.mimeType}`);
   lines.push(`- **Image size**: ${(params.imageSizeBytes / 1024).toFixed(1)} KB`);
-  lines.push(`- **Source URL**: ${params.screenUrl}`);
+  lines.push(`- **Source URL**: [Open Image in Browser](${toCdnUrl(params.screenUrl)})`);
+  lines.push(`- **Image URL**: ${toCdnUrl(params.screenUrl)}`);
 
   return lines.join("\n");
 }

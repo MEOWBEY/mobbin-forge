@@ -5,8 +5,6 @@ import {
   ALLOWED_IMAGE_HOSTS,
   MAX_IMAGE_SIZE_BYTES,
   IMAGE_FETCH_TIMEOUT_MS,
-  BYTESCALE_CDN_BASE,
-  SUPABASE_STORAGE_PREFIX,
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_INDEX,
   COLOR_SAMPLE_SIZE,
@@ -27,6 +25,7 @@ import {
   appPageScreenSchema,
   flowResultSchema,
 } from "./schemas.js";
+import { toCdnUrl } from "../utils/urls.js";
 import type { MobbinAuth } from "./auth.js";
 import type {
   AppResult,
@@ -463,21 +462,7 @@ export class MobbinApiClient {
    * Output: https://bytescale.mobbin.com/FW25bBB/image/mobbin.com/prod/content/app_screens/{uuid}.png?f=webp&w=1920&q=85&fit=shrink-cover
    */
   private toCdnUrl(imageUrl: string): string {
-    const parsed = new URL(imageUrl);
-
-    // Already a CDN URL — use as-is
-    if (parsed.hostname === "bytescale.mobbin.com") {
-      return imageUrl;
-    }
-
-    // Convert Supabase storage URL to CDN URL
-    const storageIdx = parsed.pathname.indexOf(SUPABASE_STORAGE_PREFIX);
-    if (storageIdx === -1) {
-      throw new Error(`Unrecognized Supabase URL format: ${imageUrl}`);
-    }
-
-    const storagePath = parsed.pathname.slice(storageIdx + SUPABASE_STORAGE_PREFIX.length);
-    return `${BYTESCALE_CDN_BASE}/${storagePath}?f=webp&w=1920&q=85&fit=shrink-cover`;
+    return toCdnUrl(imageUrl);
   }
 
   /**
